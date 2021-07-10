@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+    restapi:
+        build: ./api
+        command: python -u api.py
+        volumes:
+            - ./api:/api
+        ports:
+            - "5001:5000"
