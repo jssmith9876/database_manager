@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restful import Resource, Api
+import json
 import logging
 
 ###
@@ -8,14 +9,31 @@ import logging
 app = Flask(__name__)
 api = Api(app)
 
-class test(Resource):
-    def get(self):
-        return "Hello world"
+###
+#  Helper functions
+###
+def get_json_contents(path):
+    try:
+        with open(path, 'r') as f:
+            content = json.load(f)
+        return content
+    except OSError:
+        return f"Error: File {path} does not exist or cannot be opened"
+
 
 ###
-#  Endpoints
+#  Endpoint implementation
 ###
-api.add_resource(test, "/", "/test")
+class alignments(Resource):
+    def get(self):
+        return get_json_contents("testinfo.json")
+        
+
+
+###
+#  List of endpoints
+###
+api.add_resource(alignments, "/alignments")
 
 
 ## For debugging 
