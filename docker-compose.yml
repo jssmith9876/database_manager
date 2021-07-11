@@ -8,3 +8,23 @@ services:
             - ./api:/api
         ports:
             - "5001:5000"
+    db_insert:
+        build: ./db
+        command: python -u json_insert.py
+        volumes:
+            - ./db:/db
+        depends_on:
+            - mysql
+    mysql:
+        image: mysql:5.7
+        container_name: mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: 'test_pass'
+            MYSQL_USER: 'test'
+            MYSQL_PASSWORD: 'pass'
+        ports:
+            - "6033:3306"
+        volumes:
+            - dbdata:/var/lib/mysql
+volumes:
+    dbdata:
