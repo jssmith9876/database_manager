@@ -8,11 +8,11 @@ services:
             - ./api:/api
         ports:
             - "5001:5000"
-    db_insert:
-        build: ./db
+    gudb:
+        build: ./gudb
         command: python -u json_insert.py
         volumes:
-            - ./db:/db
+            - ./gudb:/gudb
         depends_on:
             - mysql
     mysql:
