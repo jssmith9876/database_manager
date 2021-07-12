@@ -1,0 +1,80 @@
+import mysql.connector
+from mysql.connector import errorcode
+
+
+"""
+DB_Interface:
+Class to directly talk and interact with the MySQL server.
+Handles operations such as creating/using databases, table creations/insertions, etc.
+"""
+class DB_Interface:
+    """
+    Initialization function:
+    Takes a given database name and uses that database after connecting to the server
+    IMPORTANT! This assumes that the database has already been created
+    """
+    def __init__(self, database_name):
+        self.cnx = mysql.connector.connect(
+            host="mysql",
+            user="root",
+            password="test_pass"
+        )
+
+        self.cursor = self.cnx.cursor()
+
+        self.db = database_name
+        self.use_database(self.db)
+
+    """
+    Function to use a given database
+    Tries to use the database, fails if it doesn't exist
+    """
+    def use_database(self, database_name):
+        try:
+            self.cursor.execute(f"USE {database_name}")
+        except mysql.connector.Error as err:
+            print(f"Database {database_name} does not exist.")
+
+    """
+    Given a list of table names (str), will try to drop each table in the list. 
+    """
+    def drop_tables(self, tables):
+        for table in tables:
+            try:
+                self.cursor.execute(f"DROP TABLE {table}")
+                print(f"Table '{table}' has been dropped")
+            except mysql.connector.Error as err:
+                print(f"Table {table} could not be dropped: {err}")
+
+    """
+    Function to create a table
+    Takes a table name as a string and a description of the new table's columns as a dictionary
+        -> table_description = {
+            col_1: column information [varchar(11) etc]
+        }
+    NOTE: table_description's last entry must be 'primary_key': 'xxx' for some column xxx
+    """
+    def create_table(self, table_name, table_description):
+        # Create the SQL query to create the given table
+        sql = f"CREATE TABLE `{table_name}` ("
+        for column, desc in table_description.items():
+            if column != 'primary_key':
+                sql += f"`{column}` {desc},"
+            else:
+                sql += f"PRIMARY KEY (`{desc}`)"
+        sql += ") ENGINE=InnoDB"
+
+        # Try to create the table (unless it already exists or for some other error)
+        try:
+            print(f"Creating table '{table_name}': ", end="")
+            self.cursor.execute(sql)
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+                print("already exists.")
+            else:
+                print(err.msg)
+        else:
+            print("OK")
+
+
+        
