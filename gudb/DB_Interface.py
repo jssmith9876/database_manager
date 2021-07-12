@@ -77,4 +77,28 @@ class DB_Interface:
             print("OK")
 
 
+    def add_row(self, table_name, row_data):
+        # Get a comma separated list of the row names
+        # then, reformat so each char is surrounded by ` (ex. name => `name`)
+        # and turn that reformatted list into a comma separated string 
+        list_of_cols = list(row_data.keys())
+        query_cols = ", ".join(["`" + col + "`" for col in list_of_cols])
+
+        # Tuple of values to insert
+        tupled_values = tuple(list(row_data.values()))  
+        
+        # Get the proper number of "%s"'s based on the number of columns
+        # We want [:-2] to slice the last ", " from the string
+        f_strings = ("%s, " * len(tupled_values))[:-2]
+
+        sql = f"INSERT INTO {table_name} (" + query_cols + ") VALUES (" + f_strings + ")"
+
+        # Try to run the query
+        try:
+            self.cursor.execute(sql, tupled_values)
+            self.cnx.commit() 
+        except mysql.connector.Error as err:
+            print(f"Row could not be inserted: {err}")
+            print(sql, tupled_values)
+
         

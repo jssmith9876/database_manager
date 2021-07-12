@@ -1,0 +1,50 @@
+{
+    "count": 9,
+    "results": [
+        {
+            "index": "lawful-good",
+            "name": "Lawful Good",
+            "url": "/ability-scores/lawful-good"
+        },
+        {
+            "index": "neutral-good",
+            "name": "Neutral Good",
+            "url": "/ability-scores/neutral-good"
+        },
+        {
+            "index": "chaotic-good",
+            "name": "Chaotic Good",
+            "url": "/ability-scores/chaotic-good"
+        },
+        {
+            "index": "lawful-neutral",
+            "name": "Lawful Neutral",
+            "url": "/ability-scores/lawful-neutral"
+        },
+        {
+            "index": "true-neutral",
+            "name": "True Neutral",
+            "url": "/ability-scores/true-neutral"
+        },
+        {
+            "index": "chaotic-neutral",
+            "name": "chaotic neutral",
+            "url": "/ability-scores/chaotic-neutral"
+        },
+        {
+            "index": "lawful-evil",
+            "name": "Lawful Evil",
+            "url": "/ability-scores/lawful-evil"
+        },
+        {
+            "index": "neutral-evil",
+            "name": "Neutral Evil",
+            "url": "/ability-scores/neutral-evil"
+        },
+        {
+            "index": "chaotic-evil",
+            "name": "Chaotic Evil",
+            "url": "/ability-scores/chaotic-evil"
+        }
+    ]
+}
