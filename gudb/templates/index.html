@@ -1,21 +1,13 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>GUDB</title>    
+{% extends "base.html" %}
+{% block content %}
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<h1>Graphical User Database</h1>
+<p>Welcome to the Graphical User Database</p>
+<p>Here, you can:</p>
+<ul>
+    <li><a href="#">View the content in the Starfinder database</a></li>
+    <li><a href="#">Edit the content in the Starfinder database</a></li>
+    <li>More to come! (maybe)</li>
+</ul>
 
-        <script src="/static/js/index.js"></script>
-    </head>
-    <body>
-        <h1>Graphical User Database</h1>
-        <p>Welcome to the Graphical User Database, or GUDB.</p>
-        
-        <label for="tables">Select a table:</label>
-        <select name="tables" id="tables_dropdown">
-            <option value="none" selected disabled hidden>...</option>
-        </select>
-        
-        
-    </body>
-</html>
+{% endblock %}

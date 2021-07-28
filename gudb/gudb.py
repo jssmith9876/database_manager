@@ -25,6 +25,16 @@ def index():
 def _get_tables():
     return flask.jsonify(result=db_mgr.get_tables())
 
+@app.route("/_get_rows", methods=["GET"])
+def _get_rows():
+    table_name = request.args.get('table')
+    num_rows = request.args.get('num_rows')
+    if (num_rows == 'all'):
+        result = db_mgr.get_rows(table_name)
+    else:
+        result = db_mgr.get_rows(table_name, num_rows)
+
+    return flask.jsonify(result=result)
 
 ## For debugging
 if app.debug:
@@ -32,5 +42,5 @@ if app.debug:
 
 ## Run the flask app
 if __name__ == '__main__':
-    #print(db_mgr.get_tables())
+    # print(db_mgr.get_rows('alignments'))
     app.run(host='0.0.0.0', debug=True)

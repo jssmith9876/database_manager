@@ -3,4 +3,4 @@ LABEL maintainer="jssmith9876@yahoo.com"
 COPY . /db
 WORKDIR /db
 RUN pip install -r requirements.txt
-CMD ["python", "gudb.py"]
+# CMD ["python", "json_insert.py"]

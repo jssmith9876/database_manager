@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="/static/js/index.js"></script>
+<h1>Graphical User Database</h1>
+<p>Welcome to the Graphical User Database, or GUDB.</p>
+
+<label for="tables">Select a table:</label>
+<select name="tables" id="tables_dropdown">
+    <option value="none" selected disabled hidden>...</option>
+</select>
+
+<table id="table_results">
+    <thead id="table_columns"></thead>
+    <tbody id="row_results"></tbody>
+</table>
+
+{% endblock %}
