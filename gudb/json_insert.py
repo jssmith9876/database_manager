@@ -16,6 +16,12 @@ TABLES['alignments'] = {
     'primary_key': 'id'
 }
 
+TABLES['TEST'] = {
+    'id': 'int(11) NOT NULL AUTO_INCREMENT',
+    'name': 'varchar(32) NOT NULL',
+    'primary_key': 'id'
+}
+
 
 
 
@@ -30,9 +36,9 @@ for table_name in TABLES:
     my_db.create_table(table_name, table_description)
 
 # Insert the data into the database for the given table
-CURR_TABLE = 'alignments'
-with open("testinfo.json", 'r') as f:
-    data = json.load(f)['results']
+# CURR_TABLE = 'alignments'
+# with open("testinfo.json", 'r') as f:
+#     data = json.load(f)['results']
 
-for row in data:
-    my_db.add_row(CURR_TABLE, row)
+# for row in data:
+#     my_db.add_row(CURR_TABLE, row)

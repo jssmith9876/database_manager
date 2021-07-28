@@ -23,7 +23,7 @@ def index():
 ###
 @app.route("/_get_tables", methods=["GET"])
 def _get_tables():
-    return flask.jsonify(result=db_mgr.get_tables()[0])
+    return flask.jsonify(result=db_mgr.get_tables())
 
 
 ## For debugging
