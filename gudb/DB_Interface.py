@@ -32,8 +32,21 @@ class DB_Interface:
     def use_database(self, database_name):
         try:
             self.cursor.execute(f"USE {database_name}")
+            return True
         except mysql.connector.Error as err:
             print(f"Database {database_name} does not exist.")
+            return False
+
+    """
+    Function to get all tables for a given database
+    """
+    def get_tables(self):
+        try:
+            self.cursor.execute("SHOW TABLES")
+            return self.cursor.fetchall()
+        except mysql.connector.Error as err:
+            print(f"Something went wrong! {err}")
+            return False
 
     """
     Given a list of table names (str), will try to drop each table in the list. 

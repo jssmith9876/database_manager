@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GUDB</title>    
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <h1>Graphical User Database</h1>
+        <p>Welcome to the Graphical User Database, or GUDB.</p>
+        <p>List of tables:</p>
+        <ul id="table_list"></ul>
+    </body>
+
+    <script>
+        const SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        const TABLES_URL = SCRIPT_ROOT + "/_get_tables";
+
+        $(document).ready(function() {
+            $.getJSON(TABLES_URL)
+            .done(function(response) {
+                tables = response.result;
+                
+                tables.forEach(table => {
+                    $("#table_list").append("<li>" + table + "</li>");
+                });
+
+                // console.log("The request was successful!");
+                // console.log(response);
+            }).fail(function(err) {
+                console.log("The request failed!");
+                console.log(err);
+            });
+        });
+    </script>
+</html>

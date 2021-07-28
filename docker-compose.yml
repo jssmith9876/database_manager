@@ -10,9 +10,11 @@ services:
             - "5001:5000"
     gudb:
         build: ./gudb
-        command: python -u json_insert.py
+        command: python -u gudb.py
         volumes:
             - ./gudb:/gudb
+        ports:
+            - "5002:5000"
         depends_on:
             - mysql
     mysql:
