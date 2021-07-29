@@ -119,6 +119,24 @@ class DB_Interface:
             print(f"Row could not be inserted: {err}")
             print(sql, tupled_values)
 
+    """
+    Function to get the column names from the INFO. SCHEMA for
+    a given table.
+    """
+    def get_table_columns(self, table_name):
+        query = f"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'{table_name}'"
+        try:
+            self.cursor.execute(query)
+            return self.cursor.fetchall()
+        except mysql.connector.Error as err:
+            print(f"Table columns could not be retrieved: {err}")
+            return False
+
+    """
+    Function to get the top `num_rows` rows from the given table.
+    Will likely need to add more functionality to the method to 
+    enable things like WHERE, GROUP, ORDER clauses.
+    """
     def get_rows(self, table_name, num_rows=-1):
         num_to_get = "*" if num_rows == -1 else f"TOP({num_rows})"
         query = f"SELECT {num_to_get} FROM {table_name}"
