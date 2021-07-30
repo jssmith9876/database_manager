@@ -5,14 +5,42 @@
 <h1>Graphical User Database</h1>
 <p>Welcome to the Graphical User Database, or GUDB.</p>
 
-<label for="tables">Select a table:</label>
-<select name="tables" id="tables_dropdown">
-    <option value="none" selected disabled hidden>...</option>
-</select>
+<div class="table_container">
+    <h2>Filters:</h2>
+    <form class="table_filters" action="/_get_rows">
+        <div>
+            <label for="num_rows">Select (leave blank for all)</label>
+            <input type="number" name="num_rows">
+            <span> from table </span>
+            <select name="from_table" id="tables_dropdown">
+                <option value="none" selected disabled hidden>...</option>
+            </select>
+        </div> 
 
-<table id="table_results">
-    <thead id="table_columns"></thead>
-    <tbody id="row_results"></tbody>
-</table>
+        <div style="display: flex;">
+            <input type="button" value="+" id="where_adder">
+            <div id="where_filters">
+                <label for="where_selector">Where </label>
+                <select name="where_selector" class="column_dropdown">
+                    <option value="none" selected>N.A.</option>
+                </select>
+                <span>=</span>
+                <input type="text" id="where_equality" disabled>
+            </div>
+        </div>
+
+
+        <div>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+
+    <div class="wrapper">
+        <table id="table_results">
+            <thead id="table_columns"></thead>
+            <tbody id="row_results"></tbody>
+        </table>
+    </div>
+</div>
 
 {% endblock %}
