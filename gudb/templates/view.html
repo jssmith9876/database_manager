@@ -2,13 +2,12 @@
 {% block content %}
 
 <script src="/static/js/view.js"></script>
-<h1>Graphical User Database</h1>
-<p>Welcome to the Graphical User Database, or GUDB.</p>
 
 <div class="table_container">
-    <h2>Filters:</h2>
+    <h1>View data</h1>
     <form class="table_filters" action="/_get_rows">
         <div>
+            <h3>Select:</h3>
             <label for="num_rows">Select (leave blank for all)</label>
             <input type="number" name="num_rows">
             <span> from table </span>
@@ -17,20 +16,37 @@
             </select>
         </div> 
 
-        <div style="display: flex;">
-            <input type="button" value="+" id="where_adder">
-            <div id="where_filters">
-                <label for="where_selector">Where </label>
-                <select name="where_selector" class="column_dropdown">
-                    <option value="none" selected>N.A.</option>
-                </select>
-                <span>=</span>
-                <input type="text" id="where_equality" disabled>
+        <div>
+            <h3>Where:</h3>
+            <div class="flex_container">
+                <input type="button" value="+" id="where_adder" style="max-height: 20px;">
+                <div id="where_filters">
+                    <div class="where_filter_0">
+                        <label for="where_selector">Where </label>
+                        <select class="column_dropdown where_selector">
+                            <option value="none" selected>N.A.</option>
+                        </select>
+                        <span>=</span>
+                        <input type="text" disabled>
+                    </div>
+                </div>
             </div>
         </div>
 
-
         <div>
+            <h3>Ordering:</h3>
+            <label for="order_by">Order by</label>
+            <select name="order_by" class="column_dropdown">
+                <option value="none" selected>N.A.</option>
+            </select>
+            <select name="order_direction">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </div>
+
+
+        <div class="submit_field">
             <input type="submit" value="Submit">
         </div>
     </form>

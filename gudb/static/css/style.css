@@ -1,6 +1,22 @@
 /*
+    COLOR LIST
+
+Charcol     =>  #264653
+Green       =>  #2A9D8F
+Warm Yellow =>  #E9C46A
+Orange      =>  #F4A261
+Red         =>  #E76F51
+*/
+
+/*
  *  Nav styling
  */
+ .nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+ }
 .nav ul {
     list-style-type: none;
     margin: 0;
@@ -23,7 +39,7 @@
 }
 
 /*
- *  Table styling
+ *  Table/filter styling
  */ 
 table, td, th {
     border: 1px solid black;
@@ -37,6 +53,7 @@ td {
     flex-direction: column;
     gap: 7px;
     margin-bottom: 25px;
+    padding: 20px;
 }
 .table_container {
     margin: auto;
@@ -47,6 +64,19 @@ td {
     margin: 18px auto;
     width: 85%;
 }
+#where_filters {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-left: 20px;
+}
+#where_filters > div {
+    margin-bottom: 8px;
+}
+.submit_field {
+    padding-top: 20px;
+    margin: auto;
+}
 
 
 /*
@@ -56,9 +86,11 @@ td {
     font-family: Arial, Helvetica, sans-serif;
 }
 body {
-    background-color: beige;
+    background-color: #2A9D8F;
 }
 h1 {
+    -webkit-text-stroke: 1.5px #000;
+    color: #fff;
     font-size: 3rem;
 }
 p, li, a, span {
@@ -71,6 +103,7 @@ a {
     width: 75%;
     max-width: 1400px;
     margin: auto;
+    padding-top: 50px;
 }
 .wrapper {
     background-color: #fff;
@@ -80,4 +113,31 @@ a {
 }
 .wrapper > * {
     padding: 10px;
+}
+.flex_container {
+    display: flex;
+}
+form {
+    border: 1px solid black;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 20px;
+}
+select {
+    background-color: transparent;
+    padding: 0px .5em;
+    margin: 0;
+    width: 130px;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+    border-radius: 10px;
+}
+input[type="submit"] {
+    font-size: 18px;
+    padding: 5px 15px;
+    border-radius: 20px;
+    background-color: #264653;
+    color: #fff;
 }
