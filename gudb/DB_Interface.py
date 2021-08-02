@@ -132,6 +132,13 @@ class DB_Interface:
             print(f"Table columns could not be retrieved: {err}")
             return False
 
+    def submit_query(self, query):
+        try:
+            self.cursor.execute(query)
+            return self.cursor.fetchall()
+        except mysql.connector.Error as err:
+            return f"Something went wrong: {err}"
+
     """
     Function to get the top `num_rows` rows from the given table.
     Will likely need to add more functionality to the method to 

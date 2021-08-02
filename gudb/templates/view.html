@@ -5,8 +5,20 @@
 
 <div class="table_container">
     <h1>View data</h1>
+    <p>On this page, you can view the data from tables in the database!</p>
+    <p>There are two ways to view data:</p>
+    <ol>
+        <li>By adding and managing filters from the filter box.</li>
+        <li>By writing your own SQL query.</li>
+    </ol>
+
+    <div class="button_field" style="margin-bottom: 20px;">
+        <input id="switch_methods" type="submit" value="Switch to Written Query">
+    </div>
+
     <!-- <form class="table_filters" action="/_get_rows" method="get"> -->
-    <div id="filter_box">
+    <div id="filter_box" class="box_wrapper">
+        <h2>Filtered Query</h2>
         <div>
             <h3>Select:</h3>
             <label for="num_rows">Select (leave blank for all)</label>
@@ -48,12 +60,23 @@
 
 
         <div class="submit_field">
-            <input type="submit" value="Submit">
+            <input id="filter_submit" type="submit" value="Submit">
+        </div>
+    </div>
+
+    <div id="query_box" class="box_wrapper" style="display: none;">
+        <h2>Written Query</h2>
+        <h3 style="margin-bottom: 5px;">Write your own query:</h3>
+        <em>Make sure to end the query with a ';'</em>
+        <textarea id="written_query" autofocus placeholder="Insert your own query here..."></textarea>
+        
+        <div class="submit_field">
+            <input id="query_submit" type="submit" value="Submit">
         </div>
     </div>
     <!-- </form> -->
 
-    <div class="wrapper">
+    <div class="wrapper" style="margin-bottom: 70px;">
         <table id="table_results">
             <thead id="table_columns"></thead>
             <tbody id="row_results"></tbody>

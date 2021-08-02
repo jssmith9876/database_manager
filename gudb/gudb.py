@@ -28,10 +28,18 @@ def view():
 ###
 
 ####    VIEW    ####
+"""
+Method to be used to get a list of all of the tables names
+in the database
+"""
 @app.route("/_get_tables", methods=["GET"])
 def _get_tables():
     return flask.jsonify(result=db_mgr.get_tables())
 
+"""
+Method to be used to get a list of the column names for a given
+table
+"""
 @app.route("/_get_table_columns", methods=["GET"])
 def _get_table_columns():
     table_name = request.args.get('table')
@@ -46,18 +54,31 @@ def _get_table_columns():
 
     return flask.jsonify(columns=formatted_info)
 
+
+"""
+Method to be used to get rows from the database with a given
+list of filters
+"""
 @app.route("/_get_rows", methods=["GET"])
 def _get_rows():
     filters = json.loads(request.args.get('filters'))
 
+    # Send the info to the DB_Interface
     data = db_mgr.get_rows( \
         table_name = filters['selectTable'], \
         num_rows = (-1 if filters['selectTop'] == "" else filters['selectTop']), \
         where = filters['whereConditions'], \
         orderby = filters['orderBy'] \
     )
-
     return flask.jsonify(result=data)
+
+"""
+Method to be used to submit a written SQL query
+"""
+@app.route("/_send_query", methods=["POST"])
+def _send_query():
+    query = request.form.get('query')
+    return flask.jsonify(result=db_mgr.submit_query(query))
 
 ## For debugging
 if app.debug:

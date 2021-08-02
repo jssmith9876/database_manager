@@ -62,7 +62,7 @@ td {
 }
 #table_results {
     margin: 18px auto;
-    width: 85%;
+    width: 90%;
 }
 #where_filters {
     display: flex;
@@ -73,10 +73,11 @@ td {
 #where_filters > div {
     margin-bottom: 8px;
 }
-.submit_field {
+.submit_field,
+.button_field {
     padding-top: 20px;
-    margin: auto;
-    width: 90px;
+    display: flex;
+    justify-content: center;
 }
 .delete {
     background-color: #ff6f51;
@@ -84,12 +85,20 @@ td {
     border: 1px solid #ff6f51;
     border-radius: 50%;
 }
-#filter_box {
+.box_wrapper {
     border: 1px solid black;
     padding: 20px;
     background-color: #fff;
     border-radius: 20px;
     margin-bottom: 40px;
+}
+textarea {
+    margin-top: 15px;
+    resize: none;
+    width: 98%;
+    height: 200px;
+    font-size: 18px;
+    padding: 5px;
 }
 
 

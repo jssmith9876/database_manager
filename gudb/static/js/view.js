@@ -1,6 +1,7 @@
 const TABLES_URL = "/_get_tables";
-const COLS_URL = "/_get_table_columns"
+const COLS_URL = "/_get_table_columns";
 const ROWS_URL = "/_get_rows";
+const QUERY_URL = "/_send_query";
 
 const where_template = `
 <div class="where_filter_{i}">
@@ -19,15 +20,19 @@ TODO:
     -- Add some text to the view page to give some instruction.
     -- Keep adding styling and ideas as you go. (Maybe something with 
        the 'select' fields?)
-    -- Maybe add area where user can input their own SQL query? Then the 
-       backend can just relay that query to the DB_Interface.
     -- Update styling on result table that appears so that the box 
        surrounding the table fits to the shape.
     -- Make 'and' in WHERE filters a dropdown that allows the user to 
        select either 'AND' or 'OR'
+    -- Add option to have the backend generate an SQL query based on the 
+       user's selected filters. 
 
     BACKEND THINGS
     -- Make sure get functions still work after frontend changes
+    -- Write a separate function in the DB_Interface to generate an SQL
+       query given a list of filters and options.
+        -- Make a new GET route to utilize the new function and return the 
+           generated query.
 */
 
 
@@ -74,7 +79,7 @@ const addWhereFilter = () => {
 }
 
 // Generates a html table from a given table name and rows
-const generateTable = (tableName, rowData) => {
+const generateTable = (rowData, tableName=null) => {
 
     // Clear the table that is already there
     $("#table_columns").empty();
@@ -82,18 +87,20 @@ const generateTable = (tableName, rowData) => {
 
 
     // Get the table columns for the header
-    $.getJSON(COLS_URL, { table: tableName })
-    .done(response => {
-        let columns = response.columns;
-        let tableHeader = "<tr>";
-        
-        columns.forEach(column => {
-            tableHeader += `<th>${column}</th>`;
-        });
-        tableHeader += "</tr>";
+    if (tableName != null) {
+        $.getJSON(COLS_URL, { table: tableName })
+        .done(response => {
+            let columns = response.columns;
+            let tableHeader = "<tr>";
+            
+            columns.forEach(column => {
+                tableHeader += `<th>${column}</th>`;
+            });
+            tableHeader += "</tr>";
 
-        $("#table_columns").append(tableHeader);
-    });
+            $("#table_columns").append(tableHeader);
+        });
+    }
 
     // Add the rows to the table
     rowData.forEach(row => {
@@ -159,9 +166,31 @@ $(document).ready(() => {
         $(button_div).remove();
     });
 
+    // Button to switch between filter box and query box
+    $("input[type='submit']#switch_methods").click((event) => {
+        let filter_box = $("#filter_box");
+        let query_box = $("#query_box");
 
-    // Submit button onclick to view table
-    $("input[type='submit']").click(() => {
+        // If the filter box was hidden
+        if ($(filter_box).css('display') == 'none') {
+            $(filter_box).css('display', 'block');
+            $(query_box).css('display', 'none');
+
+            // Update the button text
+            $(event.currentTarget).prop('value', 'Switch to Written Query');
+        } 
+        // Otherwise, the query box was hidden
+        else {
+            $(filter_box).css('display', 'none');
+            $(query_box).css('display', 'block');
+
+            // Update the button text
+            $(event.currentTarget).prop('value', 'Switch to Filtered Query');
+        }
+    });
+
+    // Filter box submit button click event
+    $("input[type='submit']#filter_submit").click(() => {
 
         let whereFilters = $("#where_filters > div");
 
@@ -197,13 +226,27 @@ $(document).ready(() => {
         $.getJSON(ROWS_URL, { filters: JSON.stringify(filterData) })
         .done(response => {
             // Generate the table
-            generateTable(filterData['selectTable'], response.result);
+            generateTable(response.result, tableName=filterData['selectTable']);
         
         }).fail(err => {
             console.log("Table request failed!");
             console.log(err);
         });
     });
+
+    // Written query submit button click event
+    $("input[type='submit']#query_submit").click(() => {
+        let written_query = $("#written_query").val();
+        
+        $.post(QUERY_URL, {query: written_query})
+        .done(response => {
+            // Generate the table
+            generateTable(response.result)
+        }).fail(err => {
+            console.log("Query request failed!");
+            console.log(err);
+        })
+    })
 
 });
 
