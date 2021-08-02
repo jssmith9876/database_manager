@@ -2,6 +2,7 @@ import flask
 from flask import Flask, render_template, request
 from DB_Interface import *
 import logging
+import json
 
 ###
 #  Initialize globals
@@ -47,14 +48,16 @@ def _get_table_columns():
 
 @app.route("/_get_rows", methods=["GET"])
 def _get_rows():
-    table_name = request.args.get('table')
-    num_rows = request.args.get('num_rows')
-    if (num_rows == 'all'):
-        result = db_mgr.get_rows(table_name)
-    else:
-        result = db_mgr.get_rows(table_name, num_rows)
+    filters = json.loads(request.args.get('filters'))
 
-    return flask.jsonify(rows=result)
+    data = db_mgr.get_rows( \
+        table_name = filters['selectTable'], \
+        num_rows = (-1 if filters['selectTop'] == "" else filters['selectTop']), \
+        where = filters['whereConditions'], \
+        orderby = filters['orderBy'] \
+    )
+
+    return flask.jsonify(result=data)
 
 ## For debugging
 if app.debug:

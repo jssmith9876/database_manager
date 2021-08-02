@@ -9,27 +9,25 @@ const where_template = `
         <option value="none" selected>N.A.</option>
     </select>
     <span>=</span>
-    <input type="text" disabled>
+    <input type="text" class="condition_value" disabled>
+    <input type="button" class="delete" value="&ndash;">
 </div>`;
 
 /*
 TODO:
     FRONTEND THINGS
-    -- Add a '-' button to the newly added WHERE filters so the user can 
-       delete them.
     -- Add some text to the view page to give some instruction.
     -- Keep adding styling and ideas as you go. (Maybe something with 
-       the 'select' fields? idk)
+       the 'select' fields?)
     -- Maybe add area where user can input their own SQL query? Then the 
        backend can just relay that query to the DB_Interface.
     -- Update styling on result table that appears so that the box 
        surrounding the table fits to the shape.
+    -- Make 'and' in WHERE filters a dropdown that allows the user to 
+       select either 'AND' or 'OR'
 
     BACKEND THINGS
-    -- Refactor the /_get_rows function so that it accepts data from 
-       the filter form instead of from a GET request (if the form idea
-       doesn't end up panning out we can figure out a way to handle it
-       with requests).
+    -- Make sure get functions still work after frontend changes
 */
 
 
@@ -73,6 +71,40 @@ const addWhereFilter = () => {
     num_where_filters++;
     let newFilter = where_template.replaceAll("{i}", num_where_filters);
     $("#where_filters").append(newFilter);
+}
+
+// Generates a html table from a given table name and rows
+const generateTable = (tableName, rowData) => {
+
+    // Clear the table that is already there
+    $("#table_columns").empty();
+    $("#row_results").empty();
+
+
+    // Get the table columns for the header
+    $.getJSON(COLS_URL, { table: tableName })
+    .done(response => {
+        let columns = response.columns;
+        let tableHeader = "<tr>";
+        
+        columns.forEach(column => {
+            tableHeader += `<th>${column}</th>`;
+        });
+        tableHeader += "</tr>";
+
+        $("#table_columns").append(tableHeader);
+    });
+
+    // Add the rows to the table
+    rowData.forEach(row => {
+        let newRow = "<tr>";
+        row.forEach(element => {
+            newRow += `<td>${element}</td>`;
+        });
+        newRow += "</tr>";
+
+        $("#row_results").append(newRow);
+    });
 }
 
 $(document).ready(() => {
@@ -121,56 +153,58 @@ $(document).ready(() => {
         }
     });
 
+    $("#where_filters").on('click', '.delete', (event) => {
+        // Get the div of the button that was just clicked and remove it
+        const button_div = $(event.currentTarget).parent();
+        $(button_div).remove();
+    });
 
-    /*
-    // Update the table based on the selected dropdown
-    $("#tables_dropdown").change(function() {
+
+    // Submit button onclick to view table
+    $("input[type='submit']").click(() => {
+
+        let whereFilters = $("#where_filters > div");
+
+        // Get the where filters that actually have values
+        let whereResults = {};
+        whereFilters.each(function() {
+            let conditionVar = $(this).find("select").val();
+            if (conditionVar === "") {
+                return;
+            }
+
+            let conditionValue = $(this).find(".condition_value").val();
+            if (conditionValue === "") {
+                return;
+            }
+
+            whereResults[conditionVar] = conditionValue;
+
+        });
+
+        // Get all of the filter information
+        let filterData = {
+            selectTop: $("input[name='num_rows']").val(),
+            selectTable: $("#tables_dropdown").val(),
+            whereConditions: whereResults,
+            orderBy: {
+                        "column": $("select[name='order_by'").val(),
+                        "direction": $("select[name='order_direction']").val()
+                     }
+        };
+
+        // Get the table rows from the backend
+        $.getJSON(ROWS_URL, { filters: JSON.stringify(filterData) })
+        .done(response => {
+            // Generate the table
+            generateTable(filterData['selectTable'], response.result);
         
-        // Clear the table's current entries
-        $("#table_columns").empty()
-        $("#row_results").empty();
-
-        const newTable = this.value;
-
-        // Get the columns for the table
-        $.getJSON(COLS_URL, { table: newTable })
-            .done(function(response) {
-                let columns = response.columns;
-                
-                // Add the columns to the table header
-                let table_header = "<tr>";
-                columns.forEach(column => {
-                    table_header += "<th>" + column + "</th>";
-                });
-                table_header += "</tr>";
-                $("#table_columns").append(table_header);
-
-
-                // Get the rows from the table afterwards
-                $.getJSON(ROWS_URL, { table: newTable, num_rows: 'all' })
-                .done(function(response) {
-                    let rows = response.rows;
-
-                    // Put all of the rows into the table
-                    rows.forEach(row => {
-                        let newRow = "<tr>";
-                        row.forEach(element => {
-                            newRow += `<td>${element}</td>`;
-                        });
-                        newRow += "</tr>";
-                        $("#row_results").append(newRow);
-                    });
-                }).fail(function(err) {
-                    console.log("Column request failed!");
-                    console.log(err);
-                });
-
-        }).fail(function(err) {
-            console.log("Row request failed!");
+        }).fail(err => {
+            console.log("Table request failed!");
             console.log(err);
-        })
-            
-    });*/
+        });
+    });
+
 });
 
 

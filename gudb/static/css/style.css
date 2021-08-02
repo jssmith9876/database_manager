@@ -76,6 +76,20 @@ td {
 .submit_field {
     padding-top: 20px;
     margin: auto;
+    width: 90px;
+}
+.delete {
+    background-color: #ff6f51;
+    color: #fff;
+    border: 1px solid #ff6f51;
+    border-radius: 50%;
+}
+#filter_box {
+    border: 1px solid black;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 20px;
+    margin-bottom: 40px;
 }
 
 
@@ -117,12 +131,6 @@ a {
 .flex_container {
     display: flex;
 }
-form {
-    border: 1px solid black;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 20px;
-}
 select {
     background-color: transparent;
     padding: 0px .5em;
@@ -140,4 +148,5 @@ input[type="submit"] {
     border-radius: 20px;
     background-color: #264653;
     color: #fff;
+    cursor: pointer;
 }

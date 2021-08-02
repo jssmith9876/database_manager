@@ -137,9 +137,22 @@ class DB_Interface:
     Will likely need to add more functionality to the method to 
     enable things like WHERE, GROUP, ORDER clauses.
     """
-    def get_rows(self, table_name, num_rows=-1):
-        num_to_get = "*" if num_rows == -1 else f"TOP({num_rows})"
-        query = f"SELECT {num_to_get} FROM {table_name}"
+    def get_rows(self, table_name, num_rows, where, orderby):
+        query = f"SELECT * FROM {table_name}"
+
+        if where:
+            query += " WHERE "
+            for count, condition in enumerate(where.items()):
+                if count != 0:
+                    query += " AND "
+                query += f"`{condition[0]}` = '{condition[1]}'"
+
+        if orderby['column'] != 'none':
+            query += f" ORDER BY `{orderby['column']}` {orderby['direction']}"
+
+        if num_rows != -1:
+            query += f" LIMIT {num_rows}"
+
 
         try:
             self.cursor.execute(query)

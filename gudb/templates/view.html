@@ -5,11 +5,12 @@
 
 <div class="table_container">
     <h1>View data</h1>
-    <form class="table_filters" action="/_get_rows">
+    <!-- <form class="table_filters" action="/_get_rows" method="get"> -->
+    <div id="filter_box">
         <div>
             <h3>Select:</h3>
             <label for="num_rows">Select (leave blank for all)</label>
-            <input type="number" name="num_rows">
+            <input type="number" name="num_rows" min="0">
             <span> from table </span>
             <select name="from_table" id="tables_dropdown">
                 <option value="none" selected disabled hidden>...</option>
@@ -27,7 +28,7 @@
                             <option value="none" selected>N.A.</option>
                         </select>
                         <span>=</span>
-                        <input type="text" disabled>
+                        <input type="text" class="condition_value" disabled>
                     </div>
                 </div>
             </div>
@@ -49,7 +50,8 @@
         <div class="submit_field">
             <input type="submit" value="Submit">
         </div>
-    </form>
+    </div>
+    <!-- </form> -->
 
     <div class="wrapper">
         <table id="table_results">
