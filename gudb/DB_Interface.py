@@ -132,6 +132,9 @@ class DB_Interface:
             print(f"Table columns could not be retrieved: {err}")
             return False
 
+    """
+    Function to take a query and submit it directly to the database
+    """ 
     def submit_query(self, query):
         try:
             self.cursor.execute(query)
@@ -139,19 +142,14 @@ class DB_Interface:
         except mysql.connector.Error as err:
             return f"Something went wrong: {err}"
 
-    """
-    Function to get the top `num_rows` rows from the given table.
-    Will likely need to add more functionality to the method to 
-    enable things like WHERE, GROUP, ORDER clauses.
-    """
-    def get_rows(self, table_name, num_rows, where, orderby):
+    def generate_sql(self, table_name, num_rows, where, where_operators, orderby):
         query = f"SELECT * FROM {table_name}"
 
         if where:
             query += " WHERE "
-            for count, condition in enumerate(where.items()):
+            for count, condition in enumerate(where):
                 if count != 0:
-                    query += " AND "
+                    query += f" {where_operators[count].upper()} "
                 query += f"`{condition[0]}` = '{condition[1]}'"
 
         if orderby['column'] != 'none':
@@ -160,6 +158,15 @@ class DB_Interface:
         if num_rows != -1:
             query += f" LIMIT {num_rows}"
 
+        return query + ";"
+
+    """
+    Function to get the top `num_rows` rows from the given table.
+    Will likely need to add more functionality to the method to 
+    enable things like WHERE, GROUP, ORDER clauses.
+    """
+    def get_rows(self, table_name, num_rows, where, where_operators, orderby):
+        query = self.generate_sql(table_name, num_rows, where, where_operators, orderby)
 
         try:
             self.cursor.execute(query)

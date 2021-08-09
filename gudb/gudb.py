@@ -63,11 +63,14 @@ list of filters
 def _get_rows():
     filters = json.loads(request.args.get('filters'))
 
+    #app.logger.debug(filters)
+
     # Send the info to the DB_Interface
     data = db_mgr.get_rows( \
         table_name = filters['selectTable'], \
         num_rows = (-1 if filters['selectTop'] == "" else filters['selectTop']), \
         where = filters['whereConditions'], \
+        where_operators = filters['whereOperators'], \
         orderby = filters['orderBy'] \
     )
     return flask.jsonify(result=data)
@@ -79,6 +82,25 @@ Method to be used to submit a written SQL query
 def _send_query():
     query = request.form.get('query')
     return flask.jsonify(result=db_mgr.submit_query(query))
+
+"""
+Method to be used to generate a SQL query given filter data
+"""
+@app.route("/_gen_query", methods=["GET"])
+def _gen_query():
+    filters = json.loads(request.args.get('filters'))
+
+    # Send the info to the DB_Interface
+    query = db_mgr.generate_sql( \
+        table_name = filters['selectTable'], \
+        num_rows = (-1 if filters['selectTop'] == "" else filters['selectTop']), \
+        where = filters['whereConditions'], \
+        where_operators = filters['whereOperators'], \
+        orderby = filters['orderBy'] \
+    )
+
+    return flask.jsonify(result=query)
+
 
 ## For debugging
 if app.debug:

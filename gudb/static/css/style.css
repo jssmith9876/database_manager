@@ -100,6 +100,9 @@ textarea {
     font-size: 18px;
     padding: 5px;
 }
+select.and_or_select {
+    width: 70px;
+}
 
 
 /*
@@ -158,4 +161,5 @@ input[type="submit"] {
     background-color: #264653;
     color: #fff;
     cursor: pointer;
+    margin: 0 15px;
 }

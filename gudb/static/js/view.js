@@ -1,11 +1,15 @@
 const TABLES_URL = "/_get_tables";
 const COLS_URL = "/_get_table_columns";
 const ROWS_URL = "/_get_rows";
+const GEN_QUERY_URL = "/_gen_query";
 const QUERY_URL = "/_send_query";
 
 const where_template = `
 <div class="where_filter_{i}">
-    <span>and</span>
+    <select class="and_or_select">
+        <option value="and" selected>and</option>
+        <option value="or">or</option>
+    </select>
     <select class="column_dropdown where_selector">
         <option value="none" selected>N.A.</option>
     </select>
@@ -22,17 +26,9 @@ TODO:
        the 'select' fields?)
     -- Update styling on result table that appears so that the box 
        surrounding the table fits to the shape.
-    -- Make 'and' in WHERE filters a dropdown that allows the user to 
-       select either 'AND' or 'OR'
-    -- Add option to have the backend generate an SQL query based on the 
-       user's selected filters. 
 
     BACKEND THINGS
     -- Make sure get functions still work after frontend changes
-    -- Write a separate function in the DB_Interface to generate an SQL
-       query given a list of filters and options.
-        -- Make a new GET route to utilize the new function and return the 
-           generated query.
 */
 
 
@@ -114,6 +110,70 @@ const generateTable = (rowData, tableName=null) => {
     });
 }
 
+const getFilterData = () => {
+    let whereFilters = $("#where_filters > div");
+
+    // Get the where filters that actually have values
+    let whereResults = [];
+    // Get the operator connectors (AND/OR) from the WHERE clause
+    let whereOperators = [];
+    whereFilters.each(function() {
+        let conditionVar = $(this).find(".where_selector").val();
+        if (conditionVar === "") {
+            return;
+        }
+
+        let conditionValue = $(this).find(".condition_value").val();
+        if (conditionValue === "") {
+            return;
+        }
+
+        whereOperators.push($(this).find(".and_or_select").val());
+
+        //whereResults[conditionVar] = conditionValue;
+        whereResults.push([conditionVar, conditionValue]);
+    });
+    
+
+
+    // Get all of the filter information
+    let filterData = {
+        selectTop: $("input[name='num_rows']").val(),
+        selectTable: $("#tables_dropdown").val(),
+        whereConditions: whereResults,
+        whereOperators: whereOperators,
+        orderBy: {
+                    "column": $("select[name='order_by'").val(),
+                    "direction": $("select[name='order_direction']").val()
+                    }
+    };
+
+    return filterData;
+}
+
+const switchMethods = () => {
+    let filter_box = $("#filter_box");
+    let query_box = $("#query_box");
+    let switchButton = $("#switch_methods");
+
+    // If the filter box was hidden
+    if ($(filter_box).css('display') == 'none') {
+        $(filter_box).css('display', 'block');
+        $(query_box).css('display', 'none');
+
+        // Update the button text
+        $(switchButton).prop('value', 'Switch to Written Query');
+    } 
+    // Otherwise, the query box was hidden
+    else {
+        $(filter_box).css('display', 'none');
+        $(query_box).css('display', 'block');
+
+        // Update the button text
+        $(switchButton).prop('value', 'Switch to Filtered Query');
+    }
+}
+
 $(document).ready(() => {
 
     // Send a GET request to get the tables
@@ -167,67 +227,19 @@ $(document).ready(() => {
     });
 
     // Button to switch between filter box and query box
-    $("input[type='submit']#switch_methods").click((event) => {
-        let filter_box = $("#filter_box");
-        let query_box = $("#query_box");
-
-        // If the filter box was hidden
-        if ($(filter_box).css('display') == 'none') {
-            $(filter_box).css('display', 'block');
-            $(query_box).css('display', 'none');
-
-            // Update the button text
-            $(event.currentTarget).prop('value', 'Switch to Written Query');
-        } 
-        // Otherwise, the query box was hidden
-        else {
-            $(filter_box).css('display', 'none');
-            $(query_box).css('display', 'block');
-
-            // Update the button text
-            $(event.currentTarget).prop('value', 'Switch to Filtered Query');
-        }
+    $("input[type='submit']#switch_methods").click(() => {
+        switchMethods();
     });
 
     // Filter box submit button click event
     $("input[type='submit']#filter_submit").click(() => {
-
-        let whereFilters = $("#where_filters > div");
-
-        // Get the where filters that actually have values
-        let whereResults = {};
-        whereFilters.each(function() {
-            let conditionVar = $(this).find("select").val();
-            if (conditionVar === "") {
-                return;
-            }
-
-            let conditionValue = $(this).find(".condition_value").val();
-            if (conditionValue === "") {
-                return;
-            }
-
-            whereResults[conditionVar] = conditionValue;
-
-        });
-
-        // Get all of the filter information
-        let filterData = {
-            selectTop: $("input[name='num_rows']").val(),
-            selectTable: $("#tables_dropdown").val(),
-            whereConditions: whereResults,
-            orderBy: {
-                        "column": $("select[name='order_by'").val(),
-                        "direction": $("select[name='order_direction']").val()
-                     }
-        };
+        let filterData = getFilterData();
 
         // Get the table rows from the backend
         $.getJSON(ROWS_URL, { filters: JSON.stringify(filterData) })
         .done(response => {
             // Generate the table
             generateTable(response.result, tableName=filterData['selectTable']);
-        
         }).fail(err => {
             console.log("Table request failed!");
             console.log(err);
@@ -238,7 +250,7 @@ $(document).ready(() => {
     $("input[type='submit']#query_submit").click(() => {
         let written_query = $("#written_query").val();
         
-        $.post(QUERY_URL, {query: written_query})
+        $.post(QUERY_URL, { query: written_query })
         .done(response => {
             // Generate the table
             generateTable(response.result)
@@ -246,7 +258,23 @@ $(document).ready(() => {
             console.log("Query request failed!");
             console.log(err);
         })
-    })
+    });
+
+    // Generate SQL Query button click event
+    $("input[type='submit']#generate_sql").click(() => {
+        let filterData = getFilterData();
+
+        $.getJSON(GEN_QUERY_URL, { filters: JSON.stringify(filterData) })
+        .done(response => {
+            // Change to the written query view, and fill it in with the
+            // newly generated query.
+            switchMethods();
+            $("#written_query").val(response.result);
+        }).fail(err => {
+            console.log("Query generation failed!");
+            console.log(err);
+        })
+    });
 
 });
 
