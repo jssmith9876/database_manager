@@ -1,5 +1,5 @@
 # database_manager
-Web application to assist in the creation of Starfinder characters. 
+Web application to utilize a GUI for a given MySQL database
 
 ## TODO
 
